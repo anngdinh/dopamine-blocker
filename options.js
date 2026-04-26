@@ -26,6 +26,29 @@ function parseDomains(text) {
     .filter(Boolean);
 }
 
+function parseTasks(text) {
+  const tasks = [];
+  for (const raw of text.split("\n")) {
+    const line = raw.trim();
+    if (!line) continue;
+    const parts = line.split(/\s+/);
+    if (parts.length < 3) continue;
+    const [id, domain, minStr] = parts;
+    const minutes = parseInt(minStr, 10);
+    if (!isFinite(minutes) || minutes < 0) continue;
+    tasks.push({
+      id: id.toLowerCase(),
+      domain: domain.toLowerCase(),
+      requiredMinutes: minutes
+    });
+  }
+  return tasks;
+}
+
+function formatTasks(tasks) {
+  return (tasks || []).map((t) => `${t.id} ${t.domain} ${t.requiredMinutes}`).join("\n");
+}
+
 async function load() {
   const res = await chrome.runtime.sendMessage({ type: "getStatus" });
   if (!res?.ok) return;
@@ -34,6 +57,7 @@ async function load() {
   $("gatingEnabled").checked = !!s.gatingEnabled;
   $("domains").value = (s.domains || []).join("\n");
   $("paths").value = formatPaths(s.blockedPaths);
+  $("tasks").value = formatTasks(s.tasks);
 }
 
 async function save() {
@@ -42,7 +66,8 @@ async function save() {
     dailyLimit: Math.max(60, (isFinite(minutes) ? minutes : 15) * 60),
     gatingEnabled: $("gatingEnabled").checked,
     domains: parseDomains($("domains").value),
-    blockedPaths: parsePaths($("paths").value)
+    blockedPaths: parsePaths($("paths").value),
+    tasks: parseTasks($("tasks").value)
   };
   const res = await chrome.runtime.sendMessage({ type: "saveSettings", settings });
   $("msg").textContent = res?.ok ? "Saved." : "Save failed.";

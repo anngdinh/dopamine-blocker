@@ -1,4 +1,4 @@
-import { fmtSeconds } from "./storage.js";
+import { fmtSeconds, taskComplete } from "./storage.js";
 
 const params = new URLSearchParams(location.search);
 const reason = params.get("reason") || "blocked";
@@ -23,8 +23,17 @@ async function refresh() {
 
   document.getElementById("used").textContent = fmtSeconds(used);
   document.getElementById("remaining").textContent = fmtSeconds(remaining);
-  document.getElementById("study4").textContent = state.tasks.study4Completed ? "✓ done" : "✗ pending";
-  document.getElementById("leetcode").textContent = state.tasks.leetcodeCompleted ? "✓ done" : "✗ pending";
+
+  const list = document.getElementById("taskList");
+  list.innerHTML = "";
+  for (const t of state.settings.tasks) {
+    const li = document.createElement("li");
+    const done = taskComplete(t, state.usage);
+    const tUsed = state.usage[t.domain] || 0;
+    const need = t.requiredMinutes * 60;
+    li.innerHTML = `${t.id} <span>${done ? "✓ " + fmtSeconds(need) : fmtSeconds(tUsed) + " / " + fmtSeconds(need)}</span>`;
+    list.append(li);
+  }
 }
 
 document.getElementById("goBack").addEventListener("click", () => {

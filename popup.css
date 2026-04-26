@@ -33,6 +33,8 @@ li {
 li .domain { color: #ddd; }
 li .usage { color: #aaa; font-variant-numeric: tabular-nums; }
 li.over .usage { color: #ff6b6b; }
+li.done .domain { color: #5fcf80; }
+li.done .usage { color: #5fcf80; }
 footer {
   display: flex; justify-content: space-between;
   padding: 10px 16px; border-top: 1px solid #2a2a30;

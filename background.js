@@ -2,7 +2,9 @@ import {
   getState,
   saveState,
   matchDomain,
-  isPathBlocked
+  matchTracked,
+  isPathBlocked,
+  allTasksComplete
 } from "./storage.js";
 
 let activeDomain = null;
@@ -41,7 +43,7 @@ async function evaluateTab(tab) {
   if (!["http:", "https:"].includes(url.protocol)) return;
 
   const state = await getState();
-  const { settings, tasks, usage } = state;
+  const { settings, usage } = state;
 
   const pathRule = isPathBlocked(url.hostname, url.pathname, settings.blockedPaths);
   if (pathRule) {
@@ -52,7 +54,7 @@ async function evaluateTab(tab) {
   const domain = matchDomain(url.hostname, settings.domains);
   if (!domain) return;
 
-  if (settings.gatingEnabled && !(tasks.study4Completed && tasks.leetcodeCompleted)) {
+  if (settings.gatingEnabled && !allTasksComplete(settings, usage)) {
     await redirect(tab.id, blockUrl("tasks", domain));
     return;
   }
@@ -103,12 +105,12 @@ async function refreshActive() {
   let host = "";
   try { host = new URL(tab.url).hostname; } catch (_) {}
   const s = state || (await getState());
-  activeDomain = matchDomain(host, s.settings.domains);
+  activeDomain = matchTracked(host, s.settings);
   activeTabId = tab.id;
 
   await evaluateTab(tab);
 
-  if (activeDomain) {
+  if (activeDomain && matchDomain(host, s.settings.domains)) {
     const fresh = await getState();
     if ((fresh.usage[activeDomain] || 0) >= fresh.settings.dailyLimit) {
       await redirect(tab.id, blockUrl("limit", activeDomain));
@@ -172,14 +174,6 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
     try {
       if (msg?.type === "getStatus") {
         const state = await getState();
-        sendResponse({ ok: true, state });
-      } else if (msg?.type === "setTask") {
-        const state = await getState();
-        if (msg.task in state.tasks) {
-          state.tasks[msg.task] = !!msg.value;
-          await saveState(state);
-        }
-        await evaluateAllTabs();
         sendResponse({ ok: true, state });
       } else if (msg?.type === "saveSettings") {
         const state = await getState();

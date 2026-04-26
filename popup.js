@@ -1,9 +1,22 @@
-import { fmtSeconds } from "./storage.js";
+import { fmtSeconds, taskComplete, allTasksComplete } from "./storage.js";
 
 const $ = (id) => document.getElementById(id);
 
 async function send(msg) {
   return await chrome.runtime.sendMessage(msg);
+}
+
+function row(label, value, opts = {}) {
+  const li = document.createElement("li");
+  if (opts.cls) li.className = opts.cls;
+  const a = document.createElement("span");
+  a.className = "domain";
+  a.textContent = label;
+  const b = document.createElement("span");
+  b.className = "usage";
+  b.textContent = value;
+  li.append(a, b);
+  return li;
 }
 
 async function render() {
@@ -12,41 +25,38 @@ async function render() {
   const { state } = res;
 
   $("date").textContent = state.date;
-  $("study4").checked = !!state.tasks.study4Completed;
-  $("leetcode").checked = !!state.tasks.leetcodeCompleted;
 
-  const gated = state.settings.gatingEnabled &&
-    !(state.tasks.study4Completed && state.tasks.leetcodeCompleted);
+  const taskList = $("taskList");
+  taskList.innerHTML = "";
+  for (const t of state.settings.tasks) {
+    const used = state.usage[t.domain] || 0;
+    const need = t.requiredMinutes * 60;
+    const done = taskComplete(t, state.usage);
+    taskList.append(row(
+      `${done ? "✓" : "○"} ${t.id}`,
+      done ? `${fmtSeconds(need)} ✓` : `${fmtSeconds(used)} / ${fmtSeconds(need)}`,
+      { cls: done ? "done" : "" }
+    ));
+  }
+
+  const gated = state.settings.gatingEnabled && !allTasksComplete(state.settings, state.usage);
   $("gatingHint").textContent = gated
-    ? "Both tasks must be done before target sites unlock."
+    ? "Spend the required time on each task domain to unlock target sites."
     : (state.settings.gatingEnabled ? "Tasks complete — daily limit applies." : "Gating disabled.");
 
-  const list = $("usageList");
-  list.innerHTML = "";
+  const usageList = $("usageList");
+  usageList.innerHTML = "";
   const limit = state.settings.dailyLimit;
   for (const domain of state.settings.domains) {
     const used = state.usage[domain] || 0;
-    const li = document.createElement("li");
-    if (used >= limit) li.classList.add("over");
-    const dn = document.createElement("span");
-    dn.className = "domain";
-    dn.textContent = domain;
-    const us = document.createElement("span");
-    us.className = "usage";
-    us.textContent = `${fmtSeconds(used)} / ${fmtSeconds(limit)}`;
-    li.append(dn, us);
-    list.append(li);
+    usageList.append(row(
+      domain,
+      `${fmtSeconds(used)} / ${fmtSeconds(limit)}`,
+      { cls: used >= limit ? "over" : "" }
+    ));
   }
 }
 
-$("study4").addEventListener("change", async (e) => {
-  await send({ type: "setTask", task: "study4Completed", value: e.target.checked });
-  render();
-});
-$("leetcode").addEventListener("change", async (e) => {
-  await send({ type: "setTask", task: "leetcodeCompleted", value: e.target.checked });
-  render();
-});
 $("resetUsage").addEventListener("click", async () => {
   await send({ type: "resetUsage" });
   render();

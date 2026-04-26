@@ -1,6 +1,5 @@
 export const DEFAULTS = {
   usage: {},
-  tasks: { study4Completed: false, leetcodeCompleted: false },
   settings: {
     dailyLimit: 900,
     domains: ["www.youtube.com", "www.facebook.com", "www.instagram.com"],
@@ -8,6 +7,10 @@ export const DEFAULTS = {
       { domain: "www.youtube.com", path: "/shorts" },
       { domain: "www.instagram.com", path: "/reels" },
       { domain: "www.facebook.com", path: "/reel" }
+    ],
+    tasks: [
+      { id: "leetcode", domain: "leetcode.com", requiredMinutes: 5 },
+      { id: "study4", domain: "www.study4.com", requiredMinutes: 5 }
     ],
     gatingEnabled: true
   },
@@ -26,7 +29,6 @@ export async function getState() {
   const data = await chrome.storage.local.get(null);
   const state = {
     usage: data.usage || {},
-    tasks: { ...DEFAULTS.tasks, ...(data.tasks || {}) },
     settings: { ...DEFAULTS.settings, ...(data.settings || {}) },
     date: data.date || ""
   };
@@ -36,7 +38,6 @@ export async function getState() {
 export async function saveState(state) {
   await chrome.storage.local.set({
     usage: state.usage,
-    tasks: state.tasks,
     settings: state.settings,
     date: state.date
   });
@@ -47,7 +48,6 @@ async function rollDate(state) {
   if (state.date !== today) {
     state.date = today;
     state.usage = {};
-    state.tasks = { study4Completed: false, leetcodeCompleted: false };
     await saveState(state);
   }
   return state;
@@ -56,9 +56,24 @@ async function rollDate(state) {
 export function matchDomain(host, domains) {
   if (!host) return null;
   const h = host.toLowerCase();
-  for (const d of domains) {
+  for (const d of domains || []) {
     if (h === d.toLowerCase()) return h;
   }
+  return null;
+}
+
+export function findTask(host, tasks) {
+  if (!host) return null;
+  const h = host.toLowerCase();
+  for (const t of tasks || []) {
+    if (h === (t.domain || "").toLowerCase()) return t;
+  }
+  return null;
+}
+
+export function matchTracked(host, settings) {
+  if (matchDomain(host, settings.domains)) return host.toLowerCase();
+  if (findTask(host, settings.tasks)) return host.toLowerCase();
   return null;
 }
 
@@ -71,6 +86,17 @@ export function isPathBlocked(host, pathname, blockedPaths) {
     }
   }
   return null;
+}
+
+export function taskComplete(task, usage) {
+  const need = (task.requiredMinutes || 0) * 60;
+  return (usage[task.domain] || 0) >= need;
+}
+
+export function allTasksComplete(settings, usage) {
+  const tasks = settings.tasks || [];
+  if (tasks.length === 0) return true;
+  return tasks.every((t) => taskComplete(t, usage));
 }
 
 export function fmtSeconds(sec) {
