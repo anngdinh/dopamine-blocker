@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 800">
+  <defs>
+    <linearGradient id="page" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0f0f14"/>
+      <stop offset="100%" stop-color="#1a1a22"/>
+    </linearGradient>
+    <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#5b8def"/>
+      <stop offset="100%" stop-color="#a78bfa"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="800" fill="url(#page)"/>
+
+  <g transform="translate(400 140)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+    <rect width="480" height="540" rx="14" fill="rgba(255,255,255,0.03)" stroke="#2a2a30"/>
+
+    <g transform="translate(240 90)">
+      <circle r="46" stroke="url(#ring)" stroke-width="12" fill="none"/>
+      <line x1="-30" y1="32" x2="32" y2="-30" stroke="url(#ring)" stroke-width="12" stroke-linecap="round"/>
+    </g>
+
+    <text x="240" y="200" text-anchor="middle" fill="#e8e8ea" font-size="32" font-weight="700">Hold up.</text>
+    <text x="240" y="232" text-anchor="middle" fill="#aaa" font-size="15">Finish all tasks before accessing this site.</text>
+
+    <g transform="translate(36 260)">
+      <rect width="408" height="54" rx="6" fill="rgba(216,201,122,0.08)"/>
+      <rect width="3" height="54" fill="#d8c97a"/>
+      <text x="20" y="33" fill="#d8c97a" font-size="14" font-style="italic">Bro. Your leetcode problem is staring at you.</text>
+    </g>
+
+    <g transform="translate(36 340)" fill="#ddd" font-size="14">
+      <text fill="#888" font-size="11" font-weight="600" letter-spacing="0.08em">USAGE</text>
+      <text y="28">Domain</text>
+      <text x="408" y="28" text-anchor="end">www.youtube.com</text>
+      <line y1="40" x2="408" y2="40" stroke="#2a2a30" stroke-dasharray="2,3"/>
+      <text y="62">Used today</text>
+      <text x="408" y="62" text-anchor="end">0m 00s</text>
+      <line y1="74" x2="408" y2="74" stroke="#2a2a30" stroke-dasharray="2,3"/>
+      <text y="96">Remaining</text>
+      <text x="408" y="96" text-anchor="end">15m 00s</text>
+    </g>
+
+    <g transform="translate(36 460)">
+      <text fill="#888" font-size="11" font-weight="600" letter-spacing="0.08em">TASKS</text>
+      <text y="28" fill="#ddd" font-size="14">leetcode</text>
+      <text x="408" y="28" text-anchor="end" fill="#5fcf80" font-size="14">0m 12s / 1m 00s</text>
+    </g>
+  </g>
+
+  <text x="640" y="740" text-anchor="middle" fill="#666" font-size="14"
+        font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+    Dopamine Blocker — work before reward.
+  </text>
+</svg>

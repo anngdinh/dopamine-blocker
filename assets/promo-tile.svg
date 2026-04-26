@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 280">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f0f14"/>
+      <stop offset="100%" stop-color="#1a1a22"/>
+    </linearGradient>
+    <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#5b8def"/>
+      <stop offset="100%" stop-color="#a78bfa"/>
+    </linearGradient>
+  </defs>
+  <rect width="440" height="280" fill="url(#bg)"/>
+  <g transform="translate(64 64)">
+    <rect width="152" height="152" rx="32" fill="rgba(255,255,255,0.03)" stroke="#2a2a30"/>
+    <circle cx="76" cy="76" r="42" stroke="url(#ring)" stroke-width="12" fill="none"/>
+    <line x1="50" y1="102" x2="102" y2="50" stroke="url(#ring)" stroke-width="12" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(240 110)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" fill="#e8e8ea">
+    <text font-size="32" font-weight="700" letter-spacing="-0.02em">Dopamine</text>
+    <text y="38" font-size="32" font-weight="700" letter-spacing="-0.02em">Blocker</text>
+    <text y="78" font-size="14" fill="#9aa0a6">Block. Focus. Repeat.</text>
+  </g>
+</svg>

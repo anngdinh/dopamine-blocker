@@ -5,13 +5,23 @@
   "description": "Limit distracting sites and gate access on completing daily tasks.",
   "permissions": ["storage", "tabs", "alarms", "webNavigation"],
   "host_permissions": ["<all_urls>"],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
   "background": {
     "service_worker": "background.js",
     "type": "module"
   },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Dopamine Blocker"
+    "default_title": "Dopamine Blocker",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
   },
   "options_page": "options.html",
   "web_accessible_resources": [
