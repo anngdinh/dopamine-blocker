@@ -3,10 +3,10 @@ export const DEFAULTS = {
   tasks: { study4Completed: false, leetcodeCompleted: false },
   settings: {
     dailyLimit: 900,
-    domains: ["youtube.com", "facebook.com", "instagram.com"],
+    domains: ["www.youtube.com", "www.facebook.com", "www.instagram.com"],
     blockedPaths: [
-      { domain: "youtube.com", path: "/shorts" },
-      { domain: "instagram.com", path: "/reels" }
+      { domain: "www.youtube.com", path: "/shorts" },
+      { domain: "www.instagram.com", path: "/reels" }
     ],
     gatingEnabled: true
   },
@@ -56,8 +56,7 @@ export function matchDomain(host, domains) {
   if (!host) return null;
   const h = host.toLowerCase();
   for (const d of domains) {
-    const dl = d.toLowerCase();
-    if (h === dl || h.endsWith("." + dl)) return dl;
+    if (h === d.toLowerCase()) return h;
   }
   return null;
 }
@@ -66,8 +65,7 @@ export function isPathBlocked(host, pathname, blockedPaths) {
   if (!host) return null;
   const h = host.toLowerCase();
   for (const rule of blockedPaths || []) {
-    const dl = (rule.domain || "").toLowerCase();
-    if ((h === dl || h.endsWith("." + dl)) && pathname.startsWith(rule.path)) {
+    if (h === (rule.domain || "").toLowerCase() && pathname.startsWith(rule.path)) {
       return rule;
     }
   }
