@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Chromium MV3 browser extension that limits time on distracting sites and gates access on completing daily tasks (Study4 + LeetCode). Local-only, no network, no telemetry. See README.md for the user-facing feature list.
+Chromium MV3 browser extension that limits time on distracting sites via a daily usage cap and always-blocked path rules. Configurable "task" domains have their active time tracked for informational display in the popup but do not gate access. Local-only, no network, no telemetry. See README.md for the user-facing feature list.
 
 ## Build / run / test
 
@@ -22,12 +22,12 @@ The service worker is the single source of truth for policy. UI surfaces are sta
 
 **State layer (`storage.js`)** — Only module that touches `chrome.storage.local`. Exports `getState()` / `saveState()`, plus pure helpers `matchDomain()`, `findTask()`, `matchTracked()`, `isPathBlocked()`, `taskComplete()`, `allTasksComplete()`, `fmtSeconds()`. `getState()` is also the lazy daily-reset path: it compares `state.date` to `todayStr()` and clears `usage` if rolled. Imported by both the service worker and HTML pages — keep it free of `chrome.tabs` / `chrome.runtime` calls.
 
-**Task model** — Tasks are configurable (`settings.tasks: [{id, domain, requiredMinutes}]`). Completion is *derived* from `usage[task.domain] >= requiredMinutes * 60`, not stored as a flag. The background tracks active time on task domains the same way it tracks distracting domains — both flow into a single `usage` map keyed by hostname. `matchTracked()` returns the host if it's either kind; `evaluateTab` only redirects when the host is in `settings.domains` (distracting), so task domains accumulate time but never get blocked.
+**Task model** — Tasks are configurable (`settings.tasks: [{id, domain, requiredMinutes}]`) and informational only. Completion is *derived* from `usage[task.domain] >= requiredMinutes * 60`, not stored as a flag. The background tracks active time on task domains the same way it tracks distracting domains — both flow into a single `usage` map keyed by hostname. `matchTracked()` returns the host if it's either kind; `evaluateTab` only redirects when the host is in `settings.domains` (distracting), so task domains accumulate time but never get blocked. Tasks no longer gate access — they're rendered as progress rows in the popup so the user can see their study/practice time at a glance.
 
 **Service worker (`background.js`)** — Event-driven, not polled.
 - Tracks one global `activeDomain` + `lastTickTs`. `commitElapsed()` flushes accrued seconds to `usage[activeDomain]` on every relevant event (tab activated, tab updated, window focus changed, alarm tick). There is no `setInterval` — service workers can be terminated.
 - The 30s `tick` alarm is a heartbeat for mid-session limit enforcement, **not** the time accounting mechanism. Time still accrues correctly across SW restarts because each event recomputes `now - lastTickTs`.
-- `evaluateTab(tab)` is the policy decision point. Three independent block triggers, in order: (1) path rule → `reason=path`; (2) target domain + gating fails → `reason=tasks`; (3) target domain + over limit → `reason=limit`. Each redirects via `chrome.tabs.update` to `block.html?reason=...&domain=...`.
+- `evaluateTab(tab)` is the policy decision point. Two independent block triggers, in order: (1) path rule → `reason=path`; (2) target domain + over limit → `reason=limit`. Each redirects via `chrome.tabs.update` to `block.html?reason=...&domain=...`.
 - **Loop prevention**: `isBlockPage()` early-returns in `evaluateTab` so the block page never redirects itself.
 - **SPA navigation**: YouTube/Instagram use `history.pushState`, which does *not* fire `onBeforeNavigate` or `onUpdated`. `webNavigation.onHistoryStateUpdated` is the only listener that catches `/watch` → `/shorts`.
 - **Daily reset**: dual-pathed — `dailyReset` alarm at next midnight, plus the lazy roll inside `getState()` that handles machine-sleep-over-midnight.

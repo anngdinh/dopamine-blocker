@@ -1,4 +1,4 @@
-import { fmtSeconds, taskComplete, allTasksComplete } from "./storage.js";
+import { fmtSeconds, taskComplete } from "./storage.js";
 
 const $ = (id) => document.getElementById(id);
 
@@ -38,11 +38,6 @@ async function render() {
       { cls: done ? "done" : "" }
     ));
   }
-
-  const gated = state.settings.gatingEnabled && !allTasksComplete(state.settings, state.usage);
-  $("gatingHint").textContent = gated
-    ? "Spend the required time on each task domain to unlock target sites."
-    : (state.settings.gatingEnabled ? "Tasks complete — daily limit applies." : "Gating disabled.");
 
   const usageList = $("usageList");
   usageList.innerHTML = "";

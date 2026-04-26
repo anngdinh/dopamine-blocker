@@ -3,8 +3,7 @@ import {
   saveState,
   matchDomain,
   matchTracked,
-  isPathBlocked,
-  allTasksComplete
+  isPathBlocked
 } from "./storage.js";
 
 let activeDomain = null;
@@ -53,11 +52,6 @@ async function evaluateTab(tab) {
 
   const domain = matchDomain(url.hostname, settings.domains);
   if (!domain) return;
-
-  if (settings.gatingEnabled && !allTasksComplete(settings, usage)) {
-    await redirect(tab.id, blockUrl("tasks", domain));
-    return;
-  }
 
   const used = usage[domain] || 0;
   if (used >= settings.dailyLimit) {

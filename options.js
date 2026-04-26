@@ -54,7 +54,6 @@ async function load() {
   if (!res?.ok) return;
   const s = res.state.settings;
   $("dailyLimit").value = Math.round((s.dailyLimit || 900) / 60);
-  $("gatingEnabled").checked = !!s.gatingEnabled;
   $("domains").value = (s.domains || []).join("\n");
   $("paths").value = formatPaths(s.blockedPaths);
   $("tasks").value = formatTasks(s.tasks);
@@ -64,7 +63,6 @@ async function save() {
   const minutes = parseInt($("dailyLimit").value, 10);
   const settings = {
     dailyLimit: Math.max(60, (isFinite(minutes) ? minutes : 15) * 60),
-    gatingEnabled: $("gatingEnabled").checked,
     domains: parseDomains($("domains").value),
     blockedPaths: parsePaths($("paths").value),
     tasks: parseTasks($("tasks").value)
