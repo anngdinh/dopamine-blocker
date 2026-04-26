@@ -3,7 +3,8 @@ import {
   saveState,
   matchDomain,
   matchTracked,
-  isPathBlocked
+  isPathBlocked,
+  allTasksComplete
 } from "./storage.js";
 
 let activeDomain = null;
@@ -52,6 +53,11 @@ async function evaluateTab(tab) {
 
   const rule = matchDomain(url.hostname, settings.domains);
   if (!rule) return;
+
+  if (!allTasksComplete(settings, usage)) {
+    await redirect(tab.id, blockUrl("tasks", rule.domain));
+    return;
+  }
 
   const used = usage[rule.domain] || 0;
   const limit = (rule.limitMinutes || 0) * 60;

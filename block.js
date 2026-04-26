@@ -6,6 +6,7 @@ const domain = params.get("domain") || "";
 
 const REASON_TEXT = {
   limit: "Daily limit exceeded for this site.",
+  tasks: "Finish all tasks before accessing this site.",
   path: "This path is on the always-blocked list."
 };
 

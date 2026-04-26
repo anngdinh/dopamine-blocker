@@ -7,7 +7,7 @@ Chromium browser extension (MV3) that limits time on distracting sites and gates
 - **Domain blocking** — youtube.com, facebook.com, instagram.com (configurable)
 - **Path blocking** — `/shorts`, `/reels` (configurable, always blocked)
 - **Per-domain daily limit** — each blocked domain has its own minute cap (default 15m); only counts when tab is active and window is focused
-- **Task time tracking** — configurable list of task domains (default: leetcode.com 5m, www.study4.com 5m); progress shown in popup
+- **Task gating** — configurable list of task domains (default: `leetcode.com` 5m, `www.study4.com` 5m); every task's required time must be met before any blocked domain unlocks (empty the list to disable)
 - **Daily reset** — usage resets at local midnight
 - **Local-only** — no network, no telemetry; uses `chrome.storage.local`
 
