@@ -27,14 +27,33 @@ header span { color: #888; font-size: 11px; }
 .hint { font-size: 11px; color: #777; margin: 6px 0 0; }
 ul { list-style: none; padding: 0; margin: 0; }
 li {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 4px 0; font-size: 13px;
+  display: flex; align-items: center; gap: 10px;
+  padding: 5px 0; font-size: 13px;
 }
-li .domain { color: #ddd; }
-li .usage { color: #aaa; font-variant-numeric: tabular-nums; }
-li.over .usage { color: #ff6b6b; }
+li .domain {
+  color: #ddd;
+  flex: 0 0 auto;
+  max-width: 50%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+li .bar {
+  flex: 1;
+  height: 6px;
+  background: #2a2a30;
+  border-radius: 3px;
+  overflow: hidden;
+}
+li .fill {
+  height: 100%;
+  width: 0%;
+  background: #5b8def;
+  transition: width 0.4s ease;
+}
+li.over .fill { background: #ff6b6b; }
 li.done .domain { color: #5fcf80; }
-li.done .usage { color: #5fcf80; }
+li.done .fill { background: #5fcf80; }
 footer {
   display: flex; justify-content: space-between;
   padding: 10px 16px; border-top: 1px solid #2a2a30;

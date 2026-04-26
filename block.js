@@ -75,7 +75,21 @@ async function refresh() {
     const done = taskComplete(t, state.usage);
     const tUsed = state.usage[t.domain] || 0;
     const need = t.requiredMinutes * 60;
-    li.innerHTML = `${t.id} <span>${done ? "✓ " + fmtSeconds(need) : fmtSeconds(tUsed) + " / " + fmtSeconds(need)}</span>`;
+
+    const label = document.createElement(done ? "span" : "a");
+    label.textContent = t.id;
+    if (!done) {
+      label.href = `https://${t.domain}/`;
+      label.className = "task-link";
+      label.title = `Open ${t.domain} to work on this task`;
+    }
+
+    const value = document.createElement("span");
+    value.textContent = done
+      ? `✓ ${fmtSeconds(need)}`
+      : `${fmtSeconds(tUsed)} / ${fmtSeconds(need)}`;
+
+    li.append(label, value);
     list.append(li);
   }
 }

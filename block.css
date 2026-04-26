@@ -76,6 +76,13 @@ h1 {
 }
 .status li:last-child { border-bottom: none; }
 .status span { color: #ddd; }
+.task-link {
+  color: #5b8def;
+  text-decoration: none;
+  font-weight: 500;
+}
+.task-link::before { content: "→ "; }
+.task-link:hover { text-decoration: underline; filter: brightness(1.2); }
 .actions {
   display: flex;
   gap: 8px;
