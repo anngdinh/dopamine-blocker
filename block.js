@@ -16,12 +16,13 @@ async function refresh() {
   const res = await chrome.runtime.sendMessage({ type: "getStatus" });
   if (!res?.ok) return;
   const { state } = res;
-  const limit = state.settings.dailyLimit;
+  const rule = state.settings.domains.find((d) => d.domain === domain);
+  const limit = rule ? (rule.limitMinutes || 0) * 60 : 0;
   const used = state.usage[domain] || 0;
   const remaining = Math.max(0, limit - used);
 
   document.getElementById("used").textContent = fmtSeconds(used);
-  document.getElementById("remaining").textContent = fmtSeconds(remaining);
+  document.getElementById("remaining").textContent = limit > 0 ? fmtSeconds(remaining) : "—";
 
   const list = document.getElementById("taskList");
   list.innerHTML = "";

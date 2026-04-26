@@ -27,7 +27,7 @@ The service worker is the single source of truth for policy. UI surfaces are sta
 **Service worker (`background.js`)** — Event-driven, not polled.
 - Tracks one global `activeDomain` + `lastTickTs`. `commitElapsed()` flushes accrued seconds to `usage[activeDomain]` on every relevant event (tab activated, tab updated, window focus changed, alarm tick). There is no `setInterval` — service workers can be terminated.
 - The 30s `tick` alarm is a heartbeat for mid-session limit enforcement, **not** the time accounting mechanism. Time still accrues correctly across SW restarts because each event recomputes `now - lastTickTs`.
-- `evaluateTab(tab)` is the policy decision point. Two independent block triggers, in order: (1) path rule → `reason=path`; (2) target domain + over limit → `reason=limit`. Each redirects via `chrome.tabs.update` to `block.html?reason=...&domain=...`.
+- `evaluateTab(tab)` is the policy decision point. Two independent block triggers, in order: (1) path rule → `reason=path`; (2) target domain + over its per-domain limit → `reason=limit`. Each redirects via `chrome.tabs.update` to `block.html?reason=...&domain=...`. Limits are per-domain (`settings.domains[].limitMinutes`), not global.
 - **Loop prevention**: `isBlockPage()` early-returns in `evaluateTab` so the block page never redirects itself.
 - **SPA navigation**: YouTube/Instagram use `history.pushState`, which does *not* fire `onBeforeNavigate` or `onUpdated`. `webNavigation.onHistoryStateUpdated` is the only listener that catches `/watch` → `/shorts`.
 - **Daily reset**: dual-pathed — `dailyReset` alarm at next midnight, plus the lazy roll inside `getState()` that handles machine-sleep-over-midnight.

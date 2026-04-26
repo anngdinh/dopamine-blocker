@@ -41,13 +41,13 @@ async function render() {
 
   const usageList = $("usageList");
   usageList.innerHTML = "";
-  const limit = state.settings.dailyLimit;
-  for (const domain of state.settings.domains) {
-    const used = state.usage[domain] || 0;
+  for (const d of state.settings.domains) {
+    const used = state.usage[d.domain] || 0;
+    const limit = (d.limitMinutes || 0) * 60;
     usageList.append(row(
-      domain,
+      d.domain,
       `${fmtSeconds(used)} / ${fmtSeconds(limit)}`,
-      { cls: used >= limit ? "over" : "" }
+      { cls: limit > 0 && used >= limit ? "over" : "" }
     ));
   }
 }

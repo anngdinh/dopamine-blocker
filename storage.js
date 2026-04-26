@@ -1,8 +1,11 @@
 export const DEFAULTS = {
   usage: {},
   settings: {
-    dailyLimit: 900,
-    domains: ["www.youtube.com", "www.facebook.com", "www.instagram.com"],
+    domains: [
+      { domain: "www.youtube.com", limitMinutes: 15 },
+      { domain: "www.facebook.com", limitMinutes: 15 },
+      { domain: "www.instagram.com", limitMinutes: 15 }
+    ],
     blockedPaths: [
       { domain: "www.youtube.com", path: "/shorts" },
       { domain: "www.instagram.com", path: "/reels" },
@@ -26,9 +29,18 @@ export function todayStr() {
 
 export async function getState() {
   const data = await chrome.storage.local.get(null);
+  const stored = data.settings || {};
+  const settings = { ...DEFAULTS.settings, ...stored };
+  if (Array.isArray(settings.domains) && settings.domains.some((d) => typeof d === "string")) {
+    const fallbackMin = Math.round((stored.dailyLimit || 900) / 60);
+    settings.domains = settings.domains.map((d) =>
+      typeof d === "string" ? { domain: d, limitMinutes: fallbackMin } : d
+    );
+  }
+  delete settings.dailyLimit;
   const state = {
     usage: data.usage || {},
-    settings: { ...DEFAULTS.settings, ...(data.settings || {}) },
+    settings,
     date: data.date || ""
   };
   return rollDate(state);
@@ -56,7 +68,7 @@ export function matchDomain(host, domains) {
   if (!host) return null;
   const h = host.toLowerCase();
   for (const d of domains || []) {
-    if (h === d.toLowerCase()) return h;
+    if (h === (d.domain || "").toLowerCase()) return d;
   }
   return null;
 }

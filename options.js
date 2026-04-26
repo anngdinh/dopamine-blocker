@@ -20,10 +20,22 @@ function formatPaths(rules) {
 }
 
 function parseDomains(text) {
-  return text
-    .split("\n")
-    .map((s) => s.trim().toLowerCase())
-    .filter(Boolean);
+  const out = [];
+  for (const raw of text.split("\n")) {
+    const line = raw.trim();
+    if (!line) continue;
+    const parts = line.split(/\s+/);
+    if (parts.length < 2) continue;
+    const [domain, minStr] = parts;
+    const minutes = parseInt(minStr, 10);
+    if (!isFinite(minutes) || minutes < 0) continue;
+    out.push({ domain: domain.toLowerCase(), limitMinutes: minutes });
+  }
+  return out;
+}
+
+function formatDomains(rules) {
+  return (rules || []).map((d) => `${d.domain} ${d.limitMinutes}`).join("\n");
 }
 
 function parseTasks(text) {
@@ -53,16 +65,13 @@ async function load() {
   const res = await chrome.runtime.sendMessage({ type: "getStatus" });
   if (!res?.ok) return;
   const s = res.state.settings;
-  $("dailyLimit").value = Math.round((s.dailyLimit || 900) / 60);
-  $("domains").value = (s.domains || []).join("\n");
+  $("domains").value = formatDomains(s.domains);
   $("paths").value = formatPaths(s.blockedPaths);
   $("tasks").value = formatTasks(s.tasks);
 }
 
 async function save() {
-  const minutes = parseInt($("dailyLimit").value, 10);
   const settings = {
-    dailyLimit: Math.max(60, (isFinite(minutes) ? minutes : 15) * 60),
     domains: parseDomains($("domains").value),
     blockedPaths: parsePaths($("paths").value),
     tasks: parseTasks($("tasks").value)

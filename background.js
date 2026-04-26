@@ -50,12 +50,13 @@ async function evaluateTab(tab) {
     return;
   }
 
-  const domain = matchDomain(url.hostname, settings.domains);
-  if (!domain) return;
+  const rule = matchDomain(url.hostname, settings.domains);
+  if (!rule) return;
 
-  const used = usage[domain] || 0;
-  if (used >= settings.dailyLimit) {
-    await redirect(tab.id, blockUrl("limit", domain));
+  const used = usage[rule.domain] || 0;
+  const limit = (rule.limitMinutes || 0) * 60;
+  if (limit > 0 && used >= limit) {
+    await redirect(tab.id, blockUrl("limit", rule.domain));
   }
 }
 
@@ -103,13 +104,6 @@ async function refreshActive() {
   activeTabId = tab.id;
 
   await evaluateTab(tab);
-
-  if (activeDomain && matchDomain(host, s.settings.domains)) {
-    const fresh = await getState();
-    if ((fresh.usage[activeDomain] || 0) >= fresh.settings.dailyLimit) {
-      await redirect(tab.id, blockUrl("limit", activeDomain));
-    }
-  }
 }
 
 chrome.tabs.onActivated.addListener(() => { refreshActive(); });

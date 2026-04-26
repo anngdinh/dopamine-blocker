@@ -10,16 +10,8 @@
     <h1>Dopamine Blocker — Settings</h1>
 
     <section>
-      <h2>Daily limit</h2>
-      <label>
-        Minutes per domain per day
-        <input type="number" id="dailyLimit" min="1" step="1" />
-      </label>
-    </section>
-
-    <section>
       <h2>Blocked domains</h2>
-      <p class="hint">One per line, e.g. <code>youtube.com</code></p>
+      <p class="hint">One per line as <code>domain minutes</code>, e.g. <code>www.youtube.com 15</code>. Each domain has its own daily limit.</p>
       <textarea id="domains" rows="5"></textarea>
     </section>
 
