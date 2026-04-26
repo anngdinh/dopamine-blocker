@@ -12,8 +12,7 @@ export const DEFAULTS = {
       { domain: "www.facebook.com", path: "/reel" }
     ],
     tasks: [
-      { id: "leetcode", domain: "leetcode.com", requiredMinutes: 5 },
-      { id: "study4", domain: "www.study4.com", requiredMinutes: 5 }
+      { id: "leetcode", domain: "leetcode.com", requiredMinutes: 1 }
     ]
   },
   date: ""
