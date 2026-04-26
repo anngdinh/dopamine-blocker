@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Dopamine Blocker</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header>
+    <h1>Dopamine Blocker</h1>
+    <span id="date"></span>
+  </header>
+
+  <section class="card">
+    <h2>Today's tasks</h2>
+    <label class="task">
+      <input type="checkbox" id="study4" />
+      <span>Study4 — study activity completed</span>
+    </label>
+    <label class="task">
+      <input type="checkbox" id="leetcode" />
+      <span>LeetCode — problem solved</span>
+    </label>
+    <p class="hint" id="gatingHint"></p>
+  </section>
+
+  <section class="card">
+    <h2>Usage</h2>
+    <ul id="usageList"></ul>
+  </section>
+
+  <footer>
+    <button id="resetUsage" class="link">Reset usage</button>
+    <button id="openOptions" class="link">Settings</button>
+  </footer>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

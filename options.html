@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Dopamine Blocker — Settings</title>
+  <link rel="stylesheet" href="options.css" />
+</head>
+<body>
+  <main>
+    <h1>Dopamine Blocker — Settings</h1>
+
+    <section>
+      <h2>Daily limit</h2>
+      <label>
+        Minutes per domain per day
+        <input type="number" id="dailyLimit" min="1" step="1" />
+      </label>
+    </section>
+
+    <section>
+      <h2>Gating</h2>
+      <label class="row">
+        <input type="checkbox" id="gatingEnabled" />
+        <span>Require Study4 + LeetCode tasks completed before access</span>
+      </label>
+    </section>
+
+    <section>
+      <h2>Blocked domains</h2>
+      <p class="hint">One per line, e.g. <code>youtube.com</code></p>
+      <textarea id="domains" rows="5"></textarea>
+    </section>
+
+    <section>
+      <h2>Always-blocked paths</h2>
+      <p class="hint">One per line as <code>domain path-prefix</code>, e.g. <code>youtube.com /shorts</code></p>
+      <textarea id="paths" rows="5"></textarea>
+    </section>
+
+    <div class="actions">
+      <button id="save">Save</button>
+      <span id="msg"></span>
+    </div>
+  </main>
+  <script type="module" src="options.js"></script>
+</body>
+</html>

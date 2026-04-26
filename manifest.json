@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Dopamine Blocker",
+  "version": "0.1.0",
+  "description": "Limit distracting sites and gate access on completing daily tasks.",
+  "permissions": ["storage", "tabs", "alarms", "webNavigation"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Dopamine Blocker"
+  },
+  "options_page": "options.html",
+  "web_accessible_resources": [
+    {
+      "resources": ["block.html"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
