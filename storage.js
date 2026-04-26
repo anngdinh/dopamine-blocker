@@ -6,7 +6,8 @@ export const DEFAULTS = {
     domains: ["www.youtube.com", "www.facebook.com", "www.instagram.com"],
     blockedPaths: [
       { domain: "www.youtube.com", path: "/shorts" },
-      { domain: "www.instagram.com", path: "/reels" }
+      { domain: "www.instagram.com", path: "/reels" },
+      { domain: "www.facebook.com", path: "/reel" }
     ],
     gatingEnabled: true
   },
