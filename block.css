@@ -83,6 +83,34 @@ h1 {
 }
 .task-link::before { content: "→ "; }
 .task-link:hover { text-decoration: underline; filter: brightness(1.2); }
+
+.status li.task-row {
+  align-items: center;
+  gap: 12px;
+}
+.status li.task-row > :first-child {
+  flex: 0 0 auto;
+  min-width: 100px;
+  max-width: 50%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.status li.task-row .bar {
+  flex: 1;
+  height: 8px;
+  background: #2a2a30;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.status li.task-row .fill {
+  height: 100%;
+  width: 0%;
+  background: #5b8def;
+  transition: width 0.4s ease;
+}
+.status li.task-row.done > :first-child { color: #5fcf80; }
+.status li.task-row.done .fill { background: #5fcf80; }
 .actions {
   display: flex;
   gap: 8px;

@@ -72,9 +72,12 @@ async function refresh() {
   list.innerHTML = "";
   for (const t of state.settings.tasks) {
     const li = document.createElement("li");
+    li.className = "task-row";
     const done = taskComplete(t, state.usage);
+    if (done) li.classList.add("done");
     const tUsed = state.usage[t.domain] || 0;
     const need = t.requiredMinutes * 60;
+    li.title = `${fmtSeconds(tUsed)} / ${fmtSeconds(need)}`;
 
     const label = document.createElement(done ? "span" : "a");
     label.textContent = t.id;
@@ -84,12 +87,15 @@ async function refresh() {
       label.title = `Open ${t.domain} to work on this task`;
     }
 
-    const value = document.createElement("span");
-    value.textContent = done
-      ? `✓ ${fmtSeconds(need)}`
-      : `${fmtSeconds(tUsed)} / ${fmtSeconds(need)}`;
+    const bar = document.createElement("div");
+    bar.className = "bar";
+    const fill = document.createElement("div");
+    fill.className = "fill";
+    const pct = need > 0 ? Math.min(100, Math.max(0, (tUsed / need) * 100)) : 0;
+    fill.style.width = `${pct}%`;
+    bar.append(fill);
 
-    li.append(label, value);
+    li.append(label, bar);
     list.append(li);
   }
 }
